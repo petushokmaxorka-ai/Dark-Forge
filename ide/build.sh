@@ -41,6 +41,12 @@ if [[ "${SHOULD_BUILD}" == "yes" ]]; then
       npm run copy-policy-dto --prefix build
       node build/lib/policies/policyGenerator.ts build/lib/policies/policyData.jsonc win32
 
+      # rcedit cannot stamp non-PE prebuilds and dies on linux/darwin .node
+      # files shipped inside node_modules (upstream VSCodium patched this in
+      # patches/windows/* which are stale for this pin) — drop them instead.
+      find node_modules -type d \( -name "linux-*" -o -name "darwin-*" -o -name "android-arm*" -o -name "freebsd-*" \) -path "*prebuilds*" -exec rm -rf {} + 2>/dev/null || true
+      find node_modules -type f \( -name "*.so" -o -name "*.dylib" \) -delete 2>/dev/null || true
+
       npm run gulp "vscode-win32-${VSCODE_ARCH}-min-packing"
 
       if [[ "${VSCODE_ARCH}" != "x64" ]]; then
