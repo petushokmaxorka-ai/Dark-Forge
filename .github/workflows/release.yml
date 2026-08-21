@@ -20,6 +20,9 @@ jobs:
           - runner: windows-latest
             goos: windows
             ext: zip
+          - runner: macos-latest
+            goos: darwin
+            ext: zip
     steps:
       - uses: actions/checkout@v4
 
@@ -73,6 +76,25 @@ jobs:
           Copy-Item launcher/launch-windows.ps1 "$stage/"
           Copy-Item config/forge.example.yaml, README.md, LICENSE, THIRD_PARTY_NOTICES.md "$stage/"
           Compress-Archive -Path "$stage" -DestinationPath "Dark.Forge-$v-windows-x64.zip"
+
+      - name: Build forge (macos, universal)
+        if: matrix.goos == 'darwin'
+        working-directory: forge
+        run: |
+          GOOS=darwin GOARCH=amd64 go build -o forge-amd64 ./cmd/forge
+          GOOS=darwin GOARCH=arm64 go build -o forge-arm64 ./cmd/forge
+
+      - name: Assemble artifacts (macos)
+        if: matrix.goos == 'darwin'
+        run: |
+          v="${{ github.ref_name }}"
+          stage="pkg/Dark.Forge-${v}-macos"
+          mkdir -p "$stage/forge" "$stage/extensions"
+          cp forge/forge-amd64 forge/forge-arm64 "$stage/forge/"
+          cp extension/swarm-chat.vsix "$stage/extensions/" 2>/dev/null || true
+          cp config/forge.example.yaml README.md LICENSE THIRD_PARTY_NOTICES.md "$stage/"
+          printf 'Binaries are UNSIGNED — remove quarantine on first run:\n  xattr -d com.apple.quarantine forge/forge-arm64\n' > "$stage/README-MACOS.txt"
+          ditto -c -k "$stage" "Dark.Forge-${v}-macos.zip"
 
       - uses: actions/upload-artifact@v4
         with:

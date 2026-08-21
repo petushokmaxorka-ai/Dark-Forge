@@ -26,3 +26,4 @@ forge.yaml
 .DS_Store
 Thumbs.db
 .forge_sessions/
+ide/.node24/

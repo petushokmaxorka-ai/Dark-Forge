@@ -11,7 +11,7 @@
 
 *Per Ignis, per Ferrum, per Codicem.*
 
-**Linux (full IDE + backend)** · **Windows (backend + extension)** · zero telemetry · your keys stay yours
+**Linux** · **Windows** · **macOS** · zero telemetry · your keys stay yours
 
 </div>
 
