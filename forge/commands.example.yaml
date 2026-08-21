@@ -1,0 +1,48 @@
+# ═══════════════════════════════════════════════════════════════
+# HERETIC FORGE — Custom slash commands
+# «Per Ignis, per Ferrum, per Codicem.»
+# Branding: HereticArch
+# ═══════════════════════════════════════════════════════════════
+#
+# This file defines additional slash commands available in the TUI.
+# Built-in commands (/help, /agents, /exit, etc.) are hardcoded.
+# Custom commands may trigger bash snippets or pre-canned prompts.
+
+commands:
+  - name: /lint
+    description: run project linter(s)
+    type: bash
+    bash: |
+      cd "${REPO_PATH}" && go vet ./... && go test ./...
+    interactive: false
+
+  - name: /status
+    description: show Forge and local brain status
+    type: builtin
+    builtin: status
+
+  - name: /todo
+    description: edit today's task list
+    type: bash
+    bash: |
+      ${EDITOR:-nano} "${REPO_PATH}/TODO.md"
+    interactive: true
+
+  - name: /canon
+    description: open the canonical TRINITY_DOCTRINE
+    type: bash
+    bash: |
+      ${EDITOR:-nano} "${REPO_PATH}/bibliotheca/TRINITY_DOCTRINE.md"
+    interactive: true
+
+  - name: /prompt
+    description: load a system prompt from bibliotheca/prompts
+    type: prompt
+    prompt_file: "${REPO_PATH}/bibliotheca/prompts/VOX_DEI_QWEN_MIMO_PROMPTS_2026-07-03.md"
+
+  - name: /summon
+    description: summon a specific agent for the next message
+    type: prompt
+    prompt: |
+      You are acting as the requested HereticArch agent.
+      Follow the TRINITY_DOCTRINE and respond in the agent's voice.

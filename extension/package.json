@@ -1,0 +1,196 @@
+{
+  "name": "swarm-chat",
+  "displayName": "Dark Forge — Swarm Chat",
+  "description": "Dark Forge AI chat panel, quick actions and inline edit — talks to the Dark Forge (forge) backend",
+  "version": "0.2.0",
+  "publisher": "dark-forge",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/petushokmaxorka-ai/dark-forge"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Machine Learning",
+    "Programming Languages",
+    "Other"
+  ],
+  "activationEvents": [
+    "onView:hereticArch.chatView",
+    "onCommand:hereticArch.openChat",
+    "onCommand:hereticArch.inlineEdit",
+    "onCommand:hereticArch.explain",
+    "onCommand:hereticArch.fix",
+    "onCommand:hereticArch.refactor",
+    "onCommand:hereticArch.test",
+    "onCommand:hereticArch.openComposer",
+    "onCommand:hereticArch.toggleAutocomplete"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "hereticArch.openChat",
+        "title": "Dark Forge: Open Swarm Chat",
+        "icon": "$(comment-discussion)"
+      },
+      {
+        "command": "hereticArch.inlineEdit",
+        "title": "Dark Forge: Inline Edit (Cmd+K)",
+        "icon": "$(wand)"
+      },
+      {
+        "command": "hereticArch.explain",
+        "title": "Dark Forge: Explain"
+      },
+      {
+        "command": "hereticArch.fix",
+        "title": "Dark Forge: Fix"
+      },
+      {
+        "command": "hereticArch.refactor",
+        "title": "Dark Forge: Refactor"
+      },
+      {
+        "command": "hereticArch.test",
+        "title": "Dark Forge: Generate Tests"
+      },
+      {
+        "command": "hereticArch.openComposer",
+        "title": "Dark Forge: Open Composer",
+        "category": "Dark Forge"
+      },
+      {
+        "command": "hereticArch.toggleAutocomplete",
+        "title": "Dark Forge: Toggle Autocomplete",
+        "category": "Dark Forge"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "hereticArch.openChat",
+        "key": "ctrl+shift+l",
+        "mac": "cmd+shift+l"
+      },
+      {
+        "command": "hereticArch.inlineEdit",
+        "key": "ctrl+k",
+        "mac": "cmd+k",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "hereticArch.openComposer",
+        "key": "ctrl+shift+i",
+        "mac": "cmd+shift+i"
+      },
+      {
+        "command": "hereticArch.explain",
+        "key": "ctrl+shift+e",
+        "mac": "cmd+shift+e",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "hereticArch.fix",
+        "key": "ctrl+shift+f",
+        "mac": "cmd+shift+f",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "hereticArch.refactor",
+        "key": "ctrl+shift+r",
+        "mac": "cmd+shift+r",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "hereticArch.test",
+        "key": "ctrl+shift+t",
+        "mac": "cmd+shift+t",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "hereticArch.toggleAutocomplete",
+        "key": "alt+a",
+        "mac": "alt+a"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "hereticArch.inlineEdit",
+          "group": "9_cutcopypaste@5"
+        },
+        {
+          "command": "hereticArch.explain",
+          "group": "heretic@1"
+        },
+        {
+          "command": "hereticArch.fix",
+          "group": "heretic@2"
+        },
+        {
+          "command": "hereticArch.refactor",
+          "group": "heretic@3"
+        },
+        {
+          "command": "hereticArch.test",
+          "group": "heretic@4"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "hereticArchSidebar",
+          "title": "Dark Forge",
+          "icon": "$(symbol-class)"
+        }
+      ]
+    },
+    "views": {
+      "hereticArchSidebar": [
+        {
+          "type": "webview",
+          "id": "hereticArch.chatView",
+          "name": "Swarm Chat",
+          "when": "true"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Dark Forge",
+      "properties": {
+        "darkforge.baseUrl": {
+          "type": "string",
+          "default": "http://127.0.0.1:9091",
+          "description": "Base URL of the Dark Forge (forge) backend"
+        },
+        "darkforge.persona": {
+          "type": "string",
+          "default": "plain",
+          "description": "Chat persona: plain (neutral) or anaphemetron (dark forge flavor)"
+        },
+        "darkforge.autocompleteEnabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable Tab autocomplete"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^3.9.2",
+    "typescript": "^5.5.0"
+  },
+  "extensionKind": [
+    "ui"
+  ]
+}

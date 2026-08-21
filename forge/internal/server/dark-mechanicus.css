@@ -1,0 +1,397 @@
+:root {
+  --dm-bg: #0a0a0a;
+  --dm-panel: #111111;
+  --dm-input: #1a1a1a;
+  --dm-gold: #c8a86e;
+  --dm-gold-bright: #e8c87e;
+  --dm-gold-dim: #8b7355;
+  --dm-muted: #5a4a3a;
+  --dm-border: #3a3028;
+  --dm-border-hover: #6a5a4a;
+  --dm-red: #8b0000;
+  --dm-red-bright: #a52a2a;
+  --dm-green: #4a7a4a;
+  --dm-orange: #c4882a;
+
+  --bg-void: var(--dm-bg);
+  --bg-panel: var(--dm-panel);
+  --bg-input: var(--dm-input);
+  --border-subtle: var(--dm-border);
+  --border-hover: var(--dm-border-hover);
+  --text-primary: var(--dm-gold-bright);
+  --text-dim: var(--dm-gold-dim);
+  --text-muted: var(--dm-muted);
+  --gold: var(--dm-gold);
+  --red: var(--dm-red);
+  --cyan: var(--dm-gold);
+  --green: var(--dm-green);
+  --amber: var(--dm-orange);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--dm-bg);
+  color: var(--dm-gold);
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  overflow: hidden;
+}
+/* Layout — body is a flex column so .main { flex:1 } actually fills
+   the viewport below the header (otherwise the chat area collapses
+   and the input is pushed off-screen). */
+body { display: flex; flex-direction: column; }
+.dm-header { flex: 0 0 auto; }
+.main { flex: 1 1 auto; min-height: 0; display: flex; overflow: hidden; }
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  background: var(--dm-panel);
+  border: 1px solid var(--dm-border);
+  color: var(--dm-gold);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  transition: border-color 50ms ease, color 50ms ease;
+}
+
+button:hover {
+  border-color: var(--dm-border-hover);
+  color: var(--dm-gold-bright);
+}
+
+input, textarea {
+  font-family: inherit;
+  outline: none;
+  background: var(--dm-input);
+  border: 1px solid var(--dm-border);
+  color: var(--dm-gold);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--dm-muted);
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--dm-panel);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--dm-border);
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--dm-border-hover);
+}
+
+/* Dashboard utility classes */
+.dm-panel {
+  background-color: var(--dm-panel);
+  border: 1px solid var(--dm-border);
+}
+
+.dm-input {
+  background-color: var(--dm-input);
+  border: 1px solid var(--dm-border);
+  color: var(--dm-gold);
+  padding: 8px 12px;
+  outline: none;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+
+.dm-input:focus {
+  border-color: var(--dm-border-hover);
+}
+
+.dm-btn {
+  background-color: var(--dm-panel);
+  border: 1px solid var(--dm-border);
+  color: var(--dm-gold);
+  padding: 8px 16px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  cursor: pointer;
+  transition: border-color 50ms ease, color 50ms ease;
+}
+
+.dm-btn:hover {
+  border-color: var(--dm-border-hover);
+  color: var(--dm-gold-bright);
+}
+
+.dm-btn-red {
+  background-color: var(--dm-red);
+  border: 1px solid var(--dm-red);
+  color: var(--dm-gold);
+}
+
+.dm-btn-red:hover {
+  background-color: var(--dm-red-bright);
+}
+
+.dm-label, .dm-subtitle {
+  font-size: 10px;
+  color: var(--dm-muted);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.dm-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--dm-gold-bright);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  text-shadow: 0 0 20px rgba(200, 168, 110, 0.3);
+}
+
+/* =================================================================
+   HERETIC FORGE — chat-application extensions on top of Dark Mechanicus.
+   These extend the original forge-world/dark-mechanicus.css with the
+   classes the chat UI needs: chips, sessions, team cards, file viewer,
+   diff panels, markdown bodies, syntax tokens, etc.
+   ================================================================= */
+
+/* Layout */
+.main { display: flex; flex: 1; overflow: hidden; }
+.sidebar { width: 260px; background-color: var(--dm-panel); border-right: 1px solid var(--dm-border); overflow-y: auto; padding: 16px; flex-shrink: 0; }
+.chat-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+.messages { flex: 1; overflow-y: auto; padding: 24px; background-color: var(--dm-bg); }
+
+/* Sidebar items */
+.file-item { padding: 4px 10px; cursor: pointer; color: var(--dm-gold-dim); font-size: 11px; border-left: 2px solid transparent; }
+.file-item:hover { background-color: var(--dm-input); color: var(--dm-gold-bright); border-left-color: var(--dm-gold); }
+.file-item.active { background-color: var(--dm-red); color: var(--dm-gold-bright); border-left-color: var(--dm-gold-bright); }
+   These extend the original forge-world/dark-mechanicus.css with the
+   classes the chat UI needs: chips, sessions, team cards, file viewer,
+   diff panels, markdown bodies, syntax tokens, etc.
+   ================================================================= */
+
+/* Layout */
+.main { display: flex; flex: 1; overflow: hidden; }
+.sidebar { width: 260px; background-color: var(--dm-panel); border-right: 1px solid var(--dm-border); overflow-y: auto; padding: 16px; }
+.chat-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.messages { flex: 1; overflow-y: auto; padding: 24px; background-color: var(--dm-bg); }
+
+/* Sidebar items */
+.file-item { padding: 4px 10px; cursor: pointer; color: var(--dm-gold-dim); font-size: 11px; border-left: 2px solid transparent; }
+.file-item:hover { background-color: var(--dm-input); color: var(--dm-gold-bright); border-left-color: var(--dm-gold); }
+.file-item.active { background-color: var(--dm-red); color: var(--dm-gold-bright); border-left-color: var(--dm-gold-bright); }
+
+/* Messages */
+.msg { margin-bottom: 24px; max-width: 90%; }
+.msg.user { margin-left: auto; }
+.msg-meta { font-size: 10px; color: var(--dm-gold-dim); margin-bottom: 4px; letter-spacing: 0.2em; }
+.msg-meta .glyph { color: var(--dm-gold-bright); font-weight: 700; }
+.msg-bubble { padding: 14px 18px; background-color: var(--dm-panel); border: 1px solid var(--dm-border); white-space: pre-wrap; word-break: break-word; line-height: 1.7; font-size: 13px; letter-spacing: 0.05em; text-transform: none; }
+.msg.user .msg-bubble { background-color: var(--dm-red); border-color: var(--dm-red-bright); color: var(--dm-gold-bright); }
+.msg.assistant .msg-bubble { background-color: var(--dm-panel); }
+.typing { color: var(--dm-gold); font-style: italic; }
+.cursor { display: inline-block; animation: dm-blink 1s steps(2) infinite; color: var(--dm-gold); }
+@keyframes dm-blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+
+/* Diff panel + SEARCH/REPLACE */
+.diff-panel { background-color: var(--dm-bg); border: 1px solid var(--dm-orange); padding: 14px; margin: 10px 0; font-size: 12px; letter-spacing: 0.05em; text-transform: none; }
+.diff-header { color: var(--dm-orange); font-weight: 700; margin-bottom: 8px; font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; }
+.diff-add { color: var(--dm-green); background-color: rgba(74, 122, 74, 0.12); padding: 2px 4px; }
+.diff-del { color: #ff5555; background-color: rgba(255, 85, 85, 0.10); padding: 2px 4px; }
+.diff-actions { display: flex; gap: 8px; margin-top: 10px; }
+.diff-apply { background-color: var(--dm-green); color: #0a0a0a; padding: 6px 14px; font-size: 11px; border: 1px solid var(--dm-green); cursor: pointer; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; font-family: inherit; }
+.diff-apply:hover { background-color: #5fa05f; box-shadow: 0 0 12px rgba(74, 122, 74, 0.5); }
+.diff-apply:disabled { background-color: var(--dm-muted); color: #000; cursor: wait; border-color: var(--dm-muted); }
+.diff-reject { background-color: var(--dm-panel); color: var(--dm-red-bright); padding: 6px 14px; font-size: 11px; border: 1px solid var(--dm-red); cursor: pointer; letter-spacing: 0.15em; text-transform: uppercase; font-family: inherit; }
+.diff-reject:hover { background-color: var(--dm-red); color: var(--dm-gold-bright); }
+
+/* Diagnostics */
+.diag-item { padding: 8px 12px; border-left: 3px solid var(--dm-red); margin: 8px 0; background-color: rgba(139, 0, 0, 0.18); font-size: 12px; }
+.diag-item.warn { border-color: var(--dm-orange); background-color: rgba(196, 136, 42, 0.10); }
+.diag-item.info { border-color: var(--dm-green); background-color: rgba(74, 122, 74, 0.10); }
+.diag-source { color: var(--dm-gold-dim); font-size: 10px; margin-top: 3px; letter-spacing: 0.2em; text-transform: uppercase; }
+
+/* Input area — OpenCode/TUI-style chat prompt. Very visible by design. */
+.input-area { padding: 16px 22px 18px; border-top: 3px solid var(--dm-gold); background: linear-gradient(180deg, rgba(0,0,0,0.4), rgba(10,10,16,0.95)); display: flex; gap: 12px; flex-direction: column; flex: 0 0 auto; box-shadow: 0 -4px 16px rgba(200,168,110,0.18); position: relative; }
+.input-area::before { content: '💬 ЧАТ ⌨ '; position: absolute; top: -10px; left: 22px; background: var(--dm-bg); padding: 0 8px; color: var(--dm-gold-bright); font-size: 10px; letter-spacing: 0.3em; border-left: 2px solid var(--dm-gold); border-right: 2px solid var(--dm-gold); }
+.input-row { display: flex; gap: 10px; align-items: stretch; }
+.chat-caret { color: var(--dm-gold-bright); font-size: 22px; line-height: 48px; padding: 0 6px 0 0; animation: dm-blink 1s steps(2) infinite; user-select: none; }
+.input-row textarea, .input-row input { flex: 1; min-height: 48px; background-color: var(--dm-input); border: 2px solid var(--dm-border); color: var(--dm-gold-bright); padding: 12px 16px; font-family: inherit; font-size: 15px; letter-spacing: 0.04em; text-transform: none; border-radius: 2px; resize: none; line-height: 1.4; }
+.input-row textarea:focus, .input-row input:focus { outline: none; border-color: var(--dm-gold-bright); box-shadow: 0 0 12px rgba(200,168,110,0.45); }
+.input-row textarea::placeholder, .input-row input::placeholder { color: var(--dm-gold-dim); font-style: italic; }
+.input-row button.dm-send, #btn { background-color: var(--dm-red); color: var(--dm-gold-bright); border: 2px solid var(--dm-red-bright); padding: 12px 22px; cursor: pointer; font-weight: 700; font-size: 14px; letter-spacing: 0.2em; text-transform: uppercase; font-family: inherit; min-height: 48px; border-radius: 2px; }
+.input-row button.dm-send:hover, #btn:hover { background-color: var(--dm-red-bright); box-shadow: 0 0 16px rgba(165,42,42,0.6); }
+.input-row button.dm-send:disabled, #btn:disabled { background-color: var(--dm-muted); color: #000; cursor: wait; border-color: var(--dm-muted); }
+.input-hint { font-size: 10px; color: var(--dm-gold-dim); text-transform: none; letter-spacing: 0.05em; padding-left: 6px; }
+
+/* File context chips (mentions in input) */
+.tool-bar { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 4px; }
+.ctx-file { background-color: var(--dm-input); padding: 2px 8px; border: 1px solid var(--dm-border); font-size: 11px; color: var(--dm-gold); }
+.ctx-file .remove { cursor: pointer; color: #ff5555; margin-left: 4px; }
+.ctx-file .remove:hover { color: #ff8080; }
+
+/* Agent + session chip row */
+.agent-chips, .session-bar { display: flex; gap: 6px; align-items: center; padding: 8px 14px; border-bottom: 1px solid var(--dm-border); background-color: var(--dm-panel); flex-wrap: wrap; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; }
+.session-bar select { flex: 1; background-color: var(--dm-bg); border: 1px solid var(--dm-border); color: var(--dm-gold-bright); padding: 4px 8px; font-family: inherit; font-size: 11px; letter-spacing: 0.1em; text-transform: none; }
+.session-bar button, .tool-bar button, .agent-chips button { background-color: var(--dm-input); color: var(--dm-gold); border: 1px solid var(--dm-border); padding: 4px 10px; font-size: 10px; letter-spacing: 0.15em; cursor: pointer; font-family: inherit; text-transform: uppercase; }
+.session-bar button:hover, .tool-bar button:hover, .agent-chips button:hover { background-color: var(--dm-border); color: var(--dm-gold-bright); border-color: var(--dm-border-hover); }
+.chip-label { color: var(--dm-gold-dim); font-size: 10px; letter-spacing: 0.3em; margin-right: 6px; font-weight: 700; align-self: center; }
+.chip { background-color: var(--dm-input); color: var(--dm-gold-bright); border: 1px solid var(--dm-border); padding: 8px 14px; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.12em; text-transform: uppercase; border-radius: 2px; min-height: 30px; transition: background-color 80ms ease, transform 60ms ease; }
+.chip:hover { background-color: var(--dm-border); border-color: var(--dm-border-hover); color: #fff; }
+.chip:active { transform: scale(0.96); }
+.chip.active { background-color: var(--dm-gold); color: var(--dm-bg); font-weight: 700; border-color: var(--dm-gold-bright); box-shadow: 0 0 14px rgba(200, 168, 110, 0.55); }
+.chip.cloud { border-style: dashed; }
+.chip.disabled { opacity: 0.4; cursor: not-allowed; border-style: dashed; }
+.chip.dyad { background: linear-gradient(135deg, #00bfbf33, #c8a84b33); color: #ffd700; border: 1px solid #ffd70088; font-weight: 700; }
+.chip.dyad.active { background: linear-gradient(135deg, #00bfbf66, #c8a84b66); color: #000; border-color: #ffd700; }
+.team-info { background-color: var(--dm-bg) !important; color: var(--dm-muted) !important; font-style: italic; cursor: default; }
+.team-info.active { background-color: var(--dm-bg) !important; color: var(--dm-muted) !important; border-color: var(--dm-border) !important; font-weight: normal !important; }
+.team-run { background-color: var(--dm-red) !important; color: var(--dm-gold-bright) !important; font-weight: 700 !important; border-color: var(--dm-red-bright) !important; }
+.team-run:hover { background-color: var(--dm-red-bright) !important; }
+
+/* Avatar circles in chat bubbles (matches 7777 / Brain Unified). */
+.msg-avatar { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; border: 1px solid var(--dm-border); letter-spacing: 0; }
+.msg.user .msg-avatar { background: var(--dm-red); color: var(--dm-gold-bright); border-color: var(--dm-red-bright); }
+.msg.assistant .msg-avatar { background: var(--dm-panel); color: var(--dm-gold); }
+
+/* File viewer (slide-in from right) */
+.file-viewer { position: fixed; top: 0; right: 0; bottom: 0; width: 55%; background-color: var(--dm-bg); border-left: 2px solid var(--dm-orange); display: none; flex-direction: column; z-index: 100; box-shadow: -4px 0 24px rgba(0, 0, 0, 0.7); }
+.file-viewer.open { display: flex; }
+.file-viewer-header { display: flex; align-items: center; gap: 10px; padding: 12px 16px; border-bottom: 1px solid var(--dm-border); background-color: var(--dm-panel); }
+.file-viewer-header .path { color: var(--dm-gold-bright); font-size: 13px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; letter-spacing: 0.05em; }
+.file-viewer-header button { background-color: var(--dm-input); color: var(--dm-gold); border: 1px solid var(--dm-border); padding: 4px 10px; font-size: 10px; cursor: pointer; font-family: inherit; letter-spacing: 0.15em; text-transform: uppercase; }
+.file-viewer-body { flex: 1; overflow: auto; padding: 16px; font-size: 12px; line-height: 1.6; white-space: pre-wrap; word-break: break-word; font-family: 'Courier New', monospace; color: var(--dm-gold-bright); }
+.file-viewer-body .file-meta { color: var(--dm-gold-dim); font-size: 10px; margin-bottom: 8px; }
+
+/* Stat cards in the hero bar — show a real live counter, delta vs
+   previous poll, and a last-updated timestamp so the user can see
+   the dashboard is actually polling (not just hardcoded). */
+.dm-stats { display: flex; gap: 10px; align-items: stretch; flex-wrap: wrap; }
+.dm-stat {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 8px 14px;
+  background: linear-gradient(180deg, var(--dm-panel) 0%, rgba(0,0,0,0.3) 100%);
+  border: 1px solid var(--dm-border);
+  border-left: 3px solid var(--dm-gold);
+  min-width: 130px;
+  border-radius: 2px;
+  position: relative;
+}
+.dm-stat .dm-label { font-size: 9px; color: var(--dm-gold-dim); letter-spacing: 0.25em; text-transform: uppercase; margin: 0; }
+.dm-stat .dm-stat-value { font-size: 16px; color: var(--dm-gold-bright); font-weight: 700; letter-spacing: 0.08em; text-shadow: 0 0 8px rgba(200,168,110,0.4); }
+.dm-stat .dm-stat-value.live { animation: dm-pulse 2.5s ease-in-out infinite; }
+.dm-stat .dm-stat-value.down { color: var(--dm-red-bright); text-shadow: 0 0 8px rgba(165, 42, 42, 0.5); }
+.dm-stat .dm-stat-delta { font-size: 9px; color: var(--dm-gold-dim); letter-spacing: 0.15em; text-transform: uppercase; }
+.dm-stat .dm-stat-delta.up { color: var(--dm-green); }
+.dm-stat .dm-stat-delta.down { color: var(--dm-red-bright); }
+.dm-stat .dm-stat-stamp { font-size: 8px; color: var(--dm-muted); letter-spacing: 0.05em; text-transform: none; }
+@keyframes dm-pulse { 0%, 100% { opacity: 1; text-shadow: 0 0 8px rgba(200,168,110,0.4); } 50% { opacity: 0.65; text-shadow: 0 0 18px rgba(200,168,110,0.8); } }
+
+.msg-bubble h1 { font-size: 18px; color: var(--dm-gold-bright); margin: 10px 0 6px; border-bottom: 1px solid var(--dm-border); padding-bottom: 4px; letter-spacing: 0.2em; text-transform: uppercase; }
+.msg-bubble h2 { font-size: 15px; color: var(--dm-gold); margin: 8px 0 4px; letter-spacing: 0.15em; text-transform: uppercase; }
+.msg-bubble h3 { font-size: 13px; color: var(--dm-orange); margin: 6px 0 4px; letter-spacing: 0.1em; text-transform: uppercase; }
+.msg-bubble h4, .msg-bubble h5, .msg-bubble h6 { font-size: 12px; color: var(--dm-orange); margin: 6px 0 4px; letter-spacing: 0.1em; text-transform: uppercase; }
+.msg-bubble p { margin: 8px 0; }
+.msg-bubble ul, .msg-bubble ol { margin: 8px 0 8px 24px; padding-left: 16px; }
+.msg-bubble li { margin: 3px 0; }
+.msg-bubble blockquote { border-left: 3px solid var(--dm-gold); padding: 6px 16px; margin: 8px 0; color: var(--dm-gold-dim); font-style: italic; background-color: var(--dm-bg); }
+.msg-bubble hr { border: none; border-top: 1px solid var(--dm-border); margin: 14px 0; }
+.msg-bubble a { color: var(--dm-gold-bright); text-decoration: underline; }
+.msg-bubble a:hover { color: var(--dm-orange); }
+.msg-bubble del { color: var(--dm-muted); text-decoration: line-through; }
+.msg-bubble code.inline { background-color: var(--dm-input); padding: 1px 6px; color: var(--dm-green); font-size: 12px; border: 1px solid var(--dm-border); font-family: 'Courier New', monospace; }
+.msg-bubble pre { background-color: var(--dm-bg); padding: 12px; border: 1px solid var(--dm-border); margin: 10px 0; overflow-x: auto; font-size: 12px; line-height: 1.5; }
+.msg-bubble pre.code-block { position: relative; padding: 34px 14px 14px; margin: 10px 0; }
+.msg-bubble pre.code-block .code-lang { position: absolute; top: 8px; right: 12px; font-size: 9px; color: var(--dm-gold-dim); text-transform: uppercase; letter-spacing: 0.2em; background-color: var(--dm-panel); padding: 2px 8px; border: 1px solid var(--dm-border); }
+.msg-bubble pre.code-block code { background: none; padding: 0; color: var(--dm-gold-bright); border: none; font-size: 12px; font-family: 'Courier New', monospace; }
+.msg-bubble pre.code-block .code-copy { position: absolute; top: 8px; left: 12px; font-size: 9px; color: var(--dm-gold-dim); text-transform: uppercase; letter-spacing: 0.15em; background-color: var(--dm-panel); padding: 2px 8px; border: 1px solid var(--dm-border); cursor: pointer; }
+.msg-bubble pre.code-block .code-copy:hover { color: var(--dm-gold-bright); border-color: var(--dm-border-hover); }
+
+/* Chat panel header — explicit "💬 ЧАТ" label + status pill so the
+   user instantly recognises the panel as the chat surface, instead
+   of assuming there's no chat because the input is at the bottom. */
+.messages-header { display: flex; align-items: baseline; justify-content: space-between; padding: 10px 18px; border-bottom: 1px solid var(--dm-border); margin-bottom: 16px; background-color: var(--dm-panel); flex: 0 0 auto; }
+.chat-label { font-size: 13px; color: var(--dm-gold-bright); font-weight: 700; letter-spacing: 0.4em; text-transform: uppercase; text-shadow: 0 0 12px rgba(200,168,110,0.4); }
+.chat-status { font-size: 10px; color: var(--dm-green); letter-spacing: 0.2em; text-transform: uppercase; padding: 2px 8px; border: 1px solid currentColor; border-radius: 2px; }
+.chat-status.busy { color: var(--dm-orange); }
+.chat-status.error { color: var(--dm-red-bright); }
+.msg-bubble table.md-table { border-collapse: collapse; margin: 10px 0; font-size: 12px; width: auto; background-color: var(--dm-panel); }
+.msg-bubble table.md-table th, .msg-bubble table.md-table td { border: 1px solid var(--dm-border); padding: 6px 12px; text-align: left; }
+.msg-bubble table.md-table th { background-color: var(--dm-bg); color: var(--dm-gold-bright); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+.msg-bubble table.md-table tr:nth-child(even) td { background-color: rgba(200, 168, 110, 0.04); }
+
+/* Syntax tokens (Dracula-esque on Dark Mechanicus gold/amber) */
+.tok-kw { color: #ff79c6; font-weight: 700; }
+.tok-ty { color: #8be9fd; }
+.tok-str { color: #f1fa8c; }
+.tok-num { color: #bd93f9; }
+.tok-com { color: #6272a4; font-style: italic; }
+.tok-fn { color: #50fa7b; }
+
+/* Mention highlight inside input */
+.mention { background-color: rgba(200, 168, 110, 0.18); color: var(--dm-gold-bright); padding: 2px 4px; }
+
+/* Team grid (multi-agent response) */
+.team-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin: 6px 0; }
+.team-grid.multi-col { grid-template-columns: 1fr 1fr; }
+.team-card { background-color: var(--dm-panel); border: 1px solid var(--dm-border); padding: 8px 10px; margin: 0; }
+.team-card-head { font-size: 11px; margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px solid var(--dm-border); display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.team-card-head b { font-size: 12px; }
+.team-card-head .dim { color: var(--dm-gold-dim); font-size: 10px; font-weight: normal; }
+.team-card-body { font-size: 12px; line-height: 1.5; }
+.team-card-body p { margin: 4px 0; }
+.team-card-body pre { margin: 4px 0; }
+
+/* Modal overlay for about/help */
+.dm-modal-backdrop { position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.7); display: none; align-items: center; justify-content: center; z-index: 200; }
+.dm-modal-backdrop.open { display: flex; }
+.dm-modal { background-color: var(--dm-panel); border: 1px solid var(--dm-gold); padding: 20px 24px; max-width: 640px; width: 80%; max-height: 80vh; overflow: auto; box-shadow: 0 0 24px rgba(200, 168, 110, 0.3); }
+.dm-modal h3 { color: var(--dm-gold-bright); font-size: 16px; letter-spacing: 0.3em; margin-bottom: 12px; text-transform: uppercase; border-bottom: 1px solid var(--dm-border); padding-bottom: 8px; }
+.dm-modal p { color: var(--dm-gold); font-size: 13px; line-height: 1.6; margin: 8px 0; text-transform: none; letter-spacing: 0.05em; }
+.dm-modal .close-btn { background-color: var(--dm-red); color: var(--dm-gold-bright); border: 1px solid var(--dm-red-bright); padding: 8px 16px; cursor: pointer; letter-spacing: 0.2em; text-transform: uppercase; font-family: inherit; margin-top: 16px; }
+
+/* Team / Dyad council trace vs final answer visual separation.
+   The inner dialogue is dim so it does not merge with the final response. */
+.council-trace-header {
+  font-size: 11px;
+  color: var(--dm-gold-dim);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin: 4px 0 8px;
+}
+.council-trace {
+  color: var(--dm-gold-dim);
+  font-size: 12px;
+  line-height: 1.5;
+  border-left: 2px solid var(--dm-border);
+  padding-left: 10px;
+  margin: 8px 0;
+  opacity: 0.85;
+}
+.final-answer {
+  color: #4ade80;
+  text-shadow: 0 0 8px rgba(74, 222, 128, 0.22);
+  margin-top: 12px;
+}
+.final-answer strong, .final-answer b { color: #86efac; }
+.final-answer em, .final-answer i { color: #86efac; }
+
+.msg.user { position: relative; }
+.msg-edit { position: absolute; top: -8px; right: -8px; background: var(--dm-panel); border: 1px solid var(--dm-border); color: var(--dm-gold-dim); font-size: 10px; width: 24px; height: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; }
+.msg-edit:hover { color: var(--dm-gold-bright); border-color: var(--dm-border-hover); }
+
+/* Drag-and-drop feedback for file attachments */
+body.drag-over { outline: 2px dashed var(--dm-green); outline-offset: -4px; }

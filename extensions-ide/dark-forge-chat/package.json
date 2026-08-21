@@ -1,0 +1,104 @@
+{
+  "name": "dark-forge-chat",
+  "displayName": "Dark Forge Swarm Chat",
+  "description": "Multi-model AI chat — council of models answers in parallel via the Dark Forge backend.",
+  "version": "0.2.0",
+  "publisher": "dark-forge",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/petushokmaxorka-ai/dark-forge"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Machine Learning",
+    "Programming Languages",
+    "Other"
+  ],
+  "activationEvents": [
+    "onView:darkForgeSwarmChatView",
+    "onCommand:darkForge.openSwarmChat",
+    "onCommand:darkForge.inlineEdit"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "darkForge.openSwarmChat",
+        "title": "Dark Forge: Open Swarm Chat",
+        "icon": "$(comment-discussion)"
+      },
+      {
+        "command": "darkForge.inlineEdit",
+        "title": "Dark Forge: Inline Edit (Cmd+K)",
+        "icon": "$(wand)"
+      }
+    ],
+    "viewsContainers": {
+      "panel": [
+        {
+          "id": "dark-forge-chat-container",
+          "title": "\u2692 Dark Forge Swarm",
+          "icon": "$(zap)"
+        }
+      ]
+    },
+    "views": {
+      "dark-forge-chat-container": [
+        {
+          "id": "darkForgeSwarmChatView",
+          "name": "\u2692 Swarm Chat",
+          "type": "webview",
+          "icon": "$(zap)",
+          "contextualTitle": "Dark Forge Swarm Chat",
+          "visibility": "visible"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "darkForge.openSwarmChat",
+        "key": "ctrl+alt+b"
+      },
+      {
+        "command": "darkForge.inlineEdit",
+        "key": "ctrl+k"
+      },
+      {
+        "command": "darkForge.inlineEdit",
+        "key": "cmd+k"
+      }
+    ],
+    "configuration": {
+      "title": "Dark Forge Swarm",
+      "properties": {
+        "darkForge.baseUrl": {
+          "type": "string",
+          "default": "http://127.0.0.1:9091"
+        },
+        "darkForge.defaultMode": {
+          "type": "string",
+          "enum": [
+            "swarm",
+            "race",
+            "debate"
+          ],
+          "default": "swarm"
+        },
+        "darkForge.participants": {
+          "type": "array",
+          "default": [
+            "qwable",
+            "qwythos",
+            "glm",
+            "kimi",
+            "mimo",
+            "minimax"
+          ]
+        }
+      }
+    }
+  }
+}

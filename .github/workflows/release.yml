@@ -1,0 +1,98 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build ${{ matrix.os }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-22.04
+            goos: linux
+            ext: tar.gz
+          - runner: windows-latest
+            goos: windows
+            ext: zip
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: forge/go.mod
+
+      - name: Build forge backend
+        working-directory: forge
+        run: |
+          go build -o forge ./cmd/forge
+          go build -o forge-tui ./cmd/forge-tui
+        if: matrix.goos == 'linux'
+
+      - name: Build forge.exe
+        working-directory: forge
+        run: go build -o forge.exe ./cmd/forge
+        if: matrix.goos == 'windows'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+        if: matrix.goos == 'linux'
+
+      - name: Package extensions (vsix)
+        working-directory: extension
+        run: |
+          npm ci --no-fund --no-audit
+          npx vsce package --allow-missing-repository -o swarm-chat.vsix
+        if: matrix.goos == 'linux'
+
+      - name: Assemble artifacts (linux)
+        if: matrix.goos == 'linux'
+        run: |
+          mkdir -p pkg/Dark.Forge-${{ github.ref_name }}-linux-x64/{forge,extensions}
+          cp forge/forge forge/forge-tui pkg/Dark.Forge-${{ github.ref_name }}-linux-x64/forge/
+          cp extension/swarm-chat.vsix pkg/Dark.Forge-${{ github.ref_name }}-linux-x64/extensions/
+          cp launcher/launch-linux.sh pkg/Dark.Forge-${{ github.ref_name }}-linux-x64/
+          cp config/forge.example.yaml README.md LICENSE THIRD_PARTY_NOTICES.md pkg/Dark.Forge-${{ github.ref_name }}-linux-x64/
+          chmod +x pkg/Dark.Forge-${{ github.ref_name }}-linux-x64/launch-linux.sh
+          tar -czf Dark.Forge-${{ github.ref_name }}-linux-x64.tar.gz -C pkg Dark.Forge-${{ github.ref_name }}-linux-x64
+
+      - name: Assemble artifacts (windows)
+        if: matrix.goos == 'windows'
+        shell: pwsh
+        run: |
+          $v = "${{ github.ref_name }}"
+          $stage = "pkg/Dark.Forge-$v-windows-x64"
+          New-Item -ItemType Directory -Force -Path "$stage/forge" | Out-Null
+          Copy-Item forge/forge.exe "$stage/forge/"
+          Copy-Item launcher/launch-windows.ps1 "$stage/"
+          Copy-Item config/forge.example.yaml, README.md, LICENSE, THIRD_PARTY_NOTICES.md "$stage/"
+          Compress-Archive -Path "$stage" -DestinationPath "Dark.Forge-$v-windows-x64.zip"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: artifacts-${{ matrix.goos }}
+          path: |
+            *.tar.gz
+            *.zip
+
+  publish:
+    needs: build
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

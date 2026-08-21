@@ -1,0 +1,65 @@
+# ⚒ DARK FORGE — example configuration
+# Copy to forge.yaml (or ~/.config/dark-forge/forge.yaml) and edit.
+#
+# The router REQUIRES one model named "magos" (the planner agent).
+# Any OpenAI-compatible endpoint works: llama.cpp, llama-swap, Ollama,
+# vLLM, LM Studio, or cloud APIs.
+#
+# API keys: ONLY via environment variables (${VAR} expansion below).
+# Never write keys into this file.
+
+server:
+  host: 127.0.0.1
+  port: 9091
+  repo: .
+
+models:
+  # ── Required: the planner ──
+  magos:
+    endpoint: http://127.0.0.1:11434/v1/chat/completions
+    model_id: "qwen3-coder"       # whatever your local server serves
+    type: local
+    speed_tps: 40
+    context_tokens: 32768
+    role: planner
+    description: "Local coding model — planner (rename model_id to match your server)"
+
+  # ── Optional: cloud specialists (uncomment + set env keys) ──
+  # glm:
+  #   endpoint: https://api.z.ai/api/coding/paas/v4/chat/completions
+  #   model_id: "glm-5.2"
+  #   type: cloud
+  #   api_key: "${HERETIC_GLM_API_KEY}"
+  #   context_tokens: 128000
+  #   role: primary-coder
+  # kimi:
+  #   endpoint: https://api.kimi.com/coding/v1/chat/completions
+  #   model_id: "kimi-for-coding"
+  #   type: cloud
+  #   api_key: "${HERETIC_KIMI_API_KEY}"
+  #   context_tokens: 256000
+  #   role: creative-specialist
+  # minimax:
+  #   endpoint: https://api.minimaxi.chat/v1/chat/completions
+  #   model_id: "MiniMax-M3"
+  #   type: cloud
+  #   api_key: "${HERETIC_MINIMAX_API_KEY}"
+  #   context_tokens: 1000000
+  #   role: multimodal-specialist
+
+# Routing: simple → local magos; heavy code → cloud (if configured).
+routing:
+  rules:
+    - match: "task==code and complexity>=7"
+      route: "magos"
+      fallback: "magos"
+      reason: "Heavy code → planner (edit route to a cloud model if configured)"
+    - match: "task==code"
+      route: "magos"
+      fallback: "magos"
+      reason: "Code → local planner"
+    - match: "complexity<=4"
+      route: "magos"
+      fallback: "magos"
+      reason: "Simple → local"
+  cloud_down_fallback: "magos"
