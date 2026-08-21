@@ -46,17 +46,30 @@ the internet directly.
   Nothing is embedded in binaries or configs.
 - **Terminal client** — `forge-tui` drives the same backend from your shell.
 
+### Downloads (latest)
+
+Release [v1.1.0](https://github.com/petushokmaxorka-ai/Dark-Forge/releases/latest)
+
+| OS | File |
+|---|---|
+| Linux (full IDE) | `Dark.Forge-1.0.0-full-linux-x64.tar.gz` — branded IDE + backend + extensions, run `launch-linux.sh` |
+| Linux (light) | `Dark.Forge-1.1.0-linux-x64.tar.gz` — backend + forge-tui + vsix |
+| Windows | `Dark.Forge-1.1.0-windows-x64.zip` — forge.exe + vsix (Setup `.exe` — in 1.1 CI) |
+| macOS | `Dark.Forge-1.1.0-macos.zip` — universal forge + vsix (`.app` — in 1.1 CI) |
+
+All installers and binaries are unsigned — SmartScreen / Gatekeeper will ask on first run.
+
 ### Install — Linux
 
 ```bash
-tar xzf Dark.Forge-1.0.0-linux-x64.tar.gz
-cd Dark.Forge-1.0.0
+tar xzf Dark.Forge-1.0.0-full-linux-x64.tar.gz
+cd Dark.Forge-1.0.0-full-linux-x64
 ./launch-linux.sh            # starts backend :9091 + opens the IDE
 ```
 
 ### Install — Windows
 
-1. Unzip `Dark.Forge-1.0.0-windows-x64.zip`.
+1. Unzip `Dark.Forge-1.1.0-windows-x64.zip`.
 2. `forge\forge.exe --config forge.example.yaml` (edit endpoints inside).
 3. In VSCodium: `Extensions → ... → Install from VSIX` → pick `swarm-chat-0.2.0.vsix`,
    set `darkforge.baseUrl` to your backend, open **Dark Forge: Swarm Chat**.
@@ -124,17 +137,30 @@ GitHub Release.
   В бинарниках и конфигах их нет.
 - **Терминальный клиент** — `forge-tui` управляет тем же бэкендом из шелла.
 
+### Скачать (последний релиз)
+
+Релиз [v1.1.0](https://github.com/petushokmaxorka-ai/Dark-Forge/releases/latest)
+
+| ОС | Файл |
+|---|---|
+| Linux (полный IDE) | `Dark.Forge-1.0.0-full-linux-x64.tar.gz` — брендированный IDE + бэкенд + расширения, запуск `launch-linux.sh` |
+| Linux (лёгкий) | `Dark.Forge-1.1.0-linux-x64.tar.gz` — бэкенд + forge-tui + vsix |
+| Windows | `Dark.Forge-1.1.0-windows-x64.zip` — forge.exe + vsix (установщик `.exe` — в 1.1, CI) |
+| macOS | `Dark.Forge-1.1.0-macos.zip` — universal-бэкенд + vsix (`.app` — в 1.1, CI) |
+
+Все инсталляторы и бинарники без подписи — SmartScreen / Gatekeeper спросят при первом запуске.
+
 ### Установка — Linux
 
 ```bash
-tar xzf Dark.Forge-1.0.0-linux-x64.tar.gz
-cd Dark.Forge-1.0.0
+tar xzf Dark.Forge-1.0.0-full-linux-x64.tar.gz
+cd Dark.Forge-1.0.0-full-linux-x64
 ./launch-linux.sh            # поднимет бэкенд :9091 и откроет IDE
 ```
 
 ### Установка — Windows
 
-1. Распакуй `Dark.Forge-1.0.0-windows-x64.zip`.
+1. Распакуй `Dark.Forge-1.1.0-windows-x64.zip`.
 2. `forge\forge.exe --config forge.example.yaml` (эндпоинты — внутри).
 3. В VSCodium: `Extensions → … → Install from VSIX` → `swarm-chat-0.2.0.vsix`,
    укажи `darkforge.baseUrl` своего бэкенда, открой **Dark Forge: Swarm Chat**.
