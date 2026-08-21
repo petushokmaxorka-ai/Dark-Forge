@@ -1,0 +1,135 @@
+name: Build IDE
+
+# Full IDE installers: Windows (Inno setup .exe + zip) and macOS (.app zip).
+# Backend-only artifacts are built by release.yml; this workflow adds the
+# branded VSCodium shell built on native runners.
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    name: IDE Windows x64
+    runs-on: windows-2022
+    defaults:
+      run:
+        shell: bash
+    env:
+      OS_NAME: windows
+      VSCODE_ARCH: x64
+      VSCODE_QUALITY: stable
+      SHOULD_BUILD: yes
+      CI_BUILD: no
+      SHOULD_BUILD_REH: no
+      SHOULD_BUILD_REH_WEB: no
+      SHOULD_BUILD_ZIP: yes
+      SHOULD_BUILD_EXE_SYS: yes
+      SHOULD_BUILD_EXE_USR: no
+      SHOULD_BUILD_MSI: no
+      SHOULD_BUILD_MSI_NOUP: no
+      APP_NAME: "Dark Forge"
+      BINARY_NAME: darkforge
+      ORG_NAME: dark-forge
+      GH_REPO_PATH: petushokmaxorka-ai/Dark-Forge
+      ASSETS_REPOSITORY: petushokmaxorka-ai/Dark-Forge
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Build IDE (VSCode pinned clone + gulp)
+        run: |
+          cd ide
+          . ./get_repo.sh
+          ./build.sh
+
+      - name: Bundle Dark Forge extensions
+        run: |
+          cd ide
+          ./install-bundled-extensions.sh "$PWD/VSCode-win32-x64"
+
+      - name: Package (setup .exe + portable .zip)
+        run: |
+          cd ide
+          mkdir -p assets
+          ./prepare_assets.sh
+          ls -la assets/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ide-windows-x64
+          path: ide/assets/*
+          if-no-files-found: error
+
+  macos:
+    name: IDE macOS x64
+    runs-on: macos-13
+    defaults:
+      run:
+        shell: bash
+    env:
+      OS_NAME: osx
+      VSCODE_ARCH: x64
+      VSCODE_QUALITY: stable
+      SHOULD_BUILD: yes
+      CI_BUILD: no
+      SHOULD_BUILD_REH: no
+      SHOULD_BUILD_REH_WEB: no
+      APP_NAME: "Dark Forge"
+      BINARY_NAME: darkforge
+      ORG_NAME: dark-forge
+      GH_REPO_PATH: petushokmaxorka-ai/Dark-Forge
+      ASSETS_REPOSITORY: petushokmaxorka-ai/Dark-Forge
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Build IDE (VSCode pinned clone + gulp)
+        run: |
+          cd ide
+          . ./get_repo.sh
+          ./build.sh
+
+      - name: Bundle Dark Forge extensions
+        run: |
+          cd ide
+          APP_DIR="$PWD/VSCode-darwin-x64/Dark Forge.app/Contents"
+          ./install-bundled-extensions.sh "$APP_DIR"
+
+      - name: Package (.app zip)
+        run: |
+          cd ide
+          mkdir -p assets
+          ./prepare_assets.sh
+          ls -la assets/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ide-macos-x64
+          path: ide/assets/*
+          if-no-files-found: error
+
+  publish:
+    needs: [windows, macos]
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Attach to release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

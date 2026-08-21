@@ -27,3 +27,6 @@ forge.yaml
 Thumbs.db
 .forge_sessions/
 ide/.node24/
+
+# IDE build outputs
+ide/assets/

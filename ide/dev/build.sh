@@ -6,10 +6,10 @@
 ###
 
 export APP_NAME="Dark Forge"
-export ASSETS_REPOSITORY="petushokmaxorka-ai/dark-forge"
+export ASSETS_REPOSITORY="petushokmaxorka-ai/Dark-Forge"
 export BINARY_NAME="darkforge"
 export CI_BUILD="no"
-export GH_REPO_PATH="petushokmaxorka-ai/dark-forge"
+export GH_REPO_PATH="petushokmaxorka-ai/Dark-Forge"
 export ORG_NAME="dark-forge"
 export SHOULD_BUILD="yes"
 export SKIP_ASSETS="yes"

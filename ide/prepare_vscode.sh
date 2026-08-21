@@ -42,21 +42,21 @@ setpath "product" "introductoryVideosUrl" "https://go.microsoft.com/fwlink/?link
 setpath "product" "keyboardShortcutsUrlLinux" "https://go.microsoft.com/fwlink/?linkid=832144"
 setpath "product" "keyboardShortcutsUrlMac" "https://go.microsoft.com/fwlink/?linkid=832143"
 setpath "product" "keyboardShortcutsUrlWin" "https://go.microsoft.com/fwlink/?linkid=832145"
-setpath "product" "licenseUrl" "https://github.com/petushokmaxorka-ai/dark-forge/blob/main/LICENSE"
+setpath "product" "licenseUrl" "https://github.com/petushokmaxorka-ai/Dark-Forge/blob/main/LICENSE"
 setpath_json "product" "linkProtectionTrustedDomains" '["https://open-vsx.org"]'
 setpath "product" "releaseNotesUrl" "https://go.microsoft.com/fwlink/?LinkID=533483#vscode"
-setpath "product" "reportIssueUrl" "https://github.com/petushokmaxorka-ai/dark-forge/issues/new"
+setpath "product" "reportIssueUrl" "https://github.com/petushokmaxorka-ai/Dark-Forge/issues/new"
 setpath "product" "requestFeatureUrl" "https://go.microsoft.com/fwlink/?LinkID=533482"
 setpath "product" "tipsAndTricksUrl" "https://go.microsoft.com/fwlink/?linkid=852118"
 setpath "product" "twitterUrl" "https://go.microsoft.com/fwlink/?LinkID=533687"
 
 if [[ "${DISABLE_UPDATE}" != "yes" ]]; then
-  setpath "product" "updateUrl" "https://raw.githubusercontent.com/petushokmaxorka-ai/dark-forge-releases/refs/heads/master"
+  setpath "product" "updateUrl" "https://raw.githubusercontent.com/petushokmaxorka-ai/Dark-Forge-releases/refs/heads/master"
 
   if [[ "${VSCODE_QUALITY}" == "insider" ]]; then
-    setpath "product" "downloadUrl" "https://github.com/petushokmaxorka-ai/dark-forge/releases"
+    setpath "product" "downloadUrl" "https://github.com/petushokmaxorka-ai/Dark-Forge/releases"
   else
-    setpath "product" "downloadUrl" "https://github.com/petushokmaxorka-ai/dark-forge/releases"
+    setpath "product" "downloadUrl" "https://github.com/petushokmaxorka-ai/Dark-Forge/releases"
   fi
 
   # if [[ "${OS_NAME}" == "windows" ]]; then
