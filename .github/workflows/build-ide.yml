@@ -44,6 +44,8 @@ jobs:
           node-version: '24'
 
       - name: Build IDE (VSCode pinned clone + gulp)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd ide
           . ./get_repo.sh
@@ -100,6 +102,8 @@ jobs:
           node-version: '24'
 
       - name: Build IDE (VSCode pinned clone + gulp)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd ide
           . ./get_repo.sh
