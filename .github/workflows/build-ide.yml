@@ -49,6 +49,12 @@ jobs:
           . ./get_repo.sh
           ./build.sh
 
+      - name: Compile swarm-chat extension
+        run: |
+          cd extension
+          npm ci --no-fund --no-audit
+          npm run compile
+
       - name: Bundle Dark Forge extensions
         run: |
           cd ide
@@ -68,14 +74,14 @@ jobs:
           if-no-files-found: error
 
   macos:
-    name: IDE macOS x64
-    runs-on: macos-13
+    name: IDE macOS arm64
+    runs-on: macos-latest
     defaults:
       run:
         shell: bash
     env:
       OS_NAME: osx
-      VSCODE_ARCH: x64
+      VSCODE_ARCH: arm64
       VSCODE_QUALITY: stable
       SHOULD_BUILD: yes
       CI_BUILD: no
@@ -99,10 +105,16 @@ jobs:
           . ./get_repo.sh
           ./build.sh
 
+      - name: Compile swarm-chat extension
+        run: |
+          cd extension
+          npm ci --no-fund --no-audit
+          npm run compile
+
       - name: Bundle Dark Forge extensions
         run: |
           cd ide
-          APP_DIR="$PWD/VSCode-darwin-x64/Dark Forge.app/Contents"
+          APP_DIR="$PWD/VSCode-darwin-arm64/Dark Forge.app/Contents"
           ./install-bundled-extensions.sh "$APP_DIR"
 
       - name: Package (.app zip)
@@ -114,7 +126,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ide-macos-x64
+          name: ide-macos-arm64
           path: ide/assets/*
           if-no-files-found: error
 
