@@ -55,7 +55,7 @@ Release [v1.1.0](https://github.com/petushokmaxorka-ai/Dark-Forge/releases/lates
 | Linux (full IDE) | `Dark.Forge-1.0.0-full-linux-x64.tar.gz` — branded IDE + backend + extensions, run `launch-linux.sh` |
 | Linux (light) | `Dark.Forge-1.1.0-linux-x64.tar.gz` — backend + forge-tui + vsix |
 | Windows | `Dark.Forge-Setup-1.1.0-windows-x64.exe` (installer) · `Dark.Forge-1.1.0-win-x64-portable.zip` (full IDE portable) · `Dark.Forge-1.1.0-windows-x64.zip` (backend + vsix) |
-| macOS | `Dark.Forge-1.1.0-macos.zip` — universal forge + vsix (`.app` — building on CI) |
+| macOS (Apple Silicon) | `Dark.Forge-1.1.0-macos-arm64-app.zip` (full IDE `.app`) · `Dark.Forge-1.1.0-macos.zip` (universal backend + vsix) |
 
 All installers and binaries are unsigned — SmartScreen / Gatekeeper will ask on first run.
 
@@ -146,7 +146,7 @@ GitHub Release.
 | Linux (полный IDE) | `Dark.Forge-1.0.0-full-linux-x64.tar.gz` — брендированный IDE + бэкенд + расширения, запуск `launch-linux.sh` |
 | Linux (лёгкий) | `Dark.Forge-1.1.0-linux-x64.tar.gz` — бэкенд + forge-tui + vsix |
 | Windows | `Dark.Forge-Setup-1.1.0-windows-x64.exe` (инсталлятор) · `Dark.Forge-1.1.0-win-x64-portable.zip` (полный IDE portable) · `Dark.Forge-1.1.0-windows-x64.zip` (бэкенд + vsix) |
-| macOS | `Dark.Forge-1.1.0-macos.zip` — universal-бэкенд + vsix (`.app` — собирается на CI) |
+| macOS (Apple Silicon) | `Dark.Forge-1.1.0-macos-arm64-app.zip` (полный IDE `.app`) · `Dark.Forge-1.1.0-macos.zip` (universal-бэкенд + vsix) |
 
 Все инсталляторы и бинарники без подписи — SmartScreen / Gatekeeper спросят при первом запуске.
 

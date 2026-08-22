@@ -144,8 +144,9 @@ jobs:
           merge-multiple: true
 
       - name: Attach to release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: dist/*
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          gh release create "$GITHUB_REF_NAME" --title "DARK FORGE ${tag}" --generate-notes --repo "$GITHUB_REPOSITORY" 2>/dev/null || true
+          gh release upload "$GITHUB_REF_NAME" dist/* --clobber
