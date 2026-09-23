@@ -4,14 +4,24 @@
 #   dist/Dark.Forge-<ver>-linux-x64.tar.gz   (forge + forge-tui + vsix + launcher + config + README)
 #   dist/Dark.Forge-<ver>-windows-x64.zip    (forge.exe + vsix + launcher + config + README)
 # Optional: --with-ide  adds ide/VSCode-linux-x64 to the Linux tarball.
+# Usage: scripts/package-release.sh [version] [--with-ide]
+#        (version defaults to the latest git tag without the "v" prefix)
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "${ROOT}"
-VERSION="${1:-}"
+VERSION=""
 WITH_IDE=0
-for arg in "$@"; do [ "$arg" = "--with-ide" ] && WITH_IDE=1; done
-[ -z "${VERSION}" ] && VERSION="$(cut -d- -f1 forge/go.mod >/dev/null 2>&1 && echo "" ; echo "1.0.0")"
+for arg in "$@"; do
+  case "${arg}" in
+    --with-ide) WITH_IDE=1 ;;
+    *) VERSION="${arg}" ;;
+  esac
+done
+if [ -z "${VERSION}" ]; then
+  VERSION="$(git describe --tags --abbrev=0 2>/dev/null || true)"
+  VERSION="${VERSION#v}"
+fi
 VERSION="${VERSION:-1.0.0}"
 DIST="${ROOT}/dist"
 STAGE_LINUX="${DIST}/stage/Dark.Forge-${VERSION}-linux-x64"
@@ -25,7 +35,7 @@ echo "→ building forge (linux + windows)…"
 
 # 2. Extensions (reuse vsix if present, else package)
 echo "→ extensions…"
-if [ ! -f extension/swarm-chat-*.vsix ] 2>/dev/null || ! ls extension/*.vsix >/dev/null 2>&1; then
+if ! ls extension/*.vsix >/dev/null 2>&1; then
   ( cd extension && npm ci --no-fund --no-audit >/dev/null 2>&1 && npx vsce package --allow-missing-repository >/dev/null )
 fi
 if ! ls extensions-ide/dark-forge-chat/*.vsix >/dev/null 2>&1; then
@@ -69,4 +79,4 @@ PYZIP
 
 rm -rf "${DIST}/stage"
 echo "✓ done:"
-ls -lh "${DIST}" | grep -E "Dark.Forge-${VERSION}" || true
+ls -lh "${DIST}"/Dark.Forge-"${VERSION}"-* || true
