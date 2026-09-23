@@ -5,6 +5,14 @@ name: Build IDE
 # branded VSCodium shell built on native runners.
 on:
   workflow_dispatch:
+    inputs:
+      tag:
+        description: >-
+          Existing release tag (e.g. v1.1.0) to attach the installers to.
+          Leave empty to only build workflow artifacts. The IDE is built from
+          the branch/tag selected in "Use workflow from".
+        required: false
+        default: ''
   push:
     tags: ['v*']
 
@@ -136,17 +144,50 @@ jobs:
 
   publish:
     needs: [windows, macos]
+    # A manual run without a tag has no release to attach to — it only keeps
+    # the workflow artifacts (previously this step failed with "GitHub
+    # Releases requires a tag", or would have created a bogus "main" release).
+    if: startsWith(github.ref, 'refs/tags/v') || inputs.tag != ''
     runs-on: ubuntu-22.04
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
+      RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
     steps:
       - uses: actions/download-artifact@v4
         with:
           path: dist
           merge-multiple: true
 
-      - name: Attach to release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Normalize asset names
         run: |
-          tag="${GITHUB_REF_NAME#v}"
-          gh release create "$GITHUB_REF_NAME" --title "DARK FORGE ${tag}" --generate-notes --repo "$GITHUB_REPOSITORY" 2>/dev/null || true
-          gh release upload "$GITHUB_REF_NAME" dist/* --clobber
+          # VSCodium names assets after the VSCode build number
+          # ("Dark ForgeSetup-x64-1.126.05619.exe"); publish them under the
+          # Dark Forge release version as documented in the README.
+          shopt -s nullglob
+          v="${RELEASE_TAG#v}"
+          mkdir -p release
+          take() {
+            local dest="$1"; shift
+            if [ "$#" -ne 1 ]; then
+              echo "::error::expected exactly one asset for ${dest}, found $#: $*"
+              exit 1
+            fi
+            mv "$1" "release/${dest}"
+          }
+          take "Dark.Forge-Setup-${v}-windows-x64.exe" dist/*Setup-x64-*.exe
+          take "Dark.Forge-${v}-win-x64-portable.zip" dist/*-win32-x64-*.zip
+          take "Dark.Forge-${v}-macos-arm64-app.zip" dist/*-darwin-arm64-*.zip
+          cd release
+          for f in *; do sha256sum "$f" > "$f.sha256"; done
+          ls -la
+
+      - name: Attach to release
+        run: |
+          # release.yml normally creates the release for a v* tag; create it
+          # here only if it does not exist yet (never invent a new tag).
+          if ! gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            gh release create "$RELEASE_TAG" --verify-tag --title "DARK FORGE ${RELEASE_TAG#v}" --generate-notes \
+              || gh release view "$RELEASE_TAG" >/dev/null
+          fi
+          gh release upload "$RELEASE_TAG" release/* --clobber

@@ -3979,9 +3979,15 @@ func (s *Server) handleMemorySearch(w http.ResponseWriter, r *http.Request) {
 
 // searchMemory does keyword-based scoring over chat_history/*.jsonl files.
 func searchMemory(query string, limit int) []map[string]interface{} {
+	// Same location as dark-forge-chat: $HOME, else the OS home directory
+	// (HOME is usually unset on Windows).
 	home := os.Getenv("HOME")
 	if home == "" {
-		home = "/root"
+		if h, err := os.UserHomeDir(); err == nil {
+			home = h
+		} else {
+			home = "/root"
+		}
 	}
 	histDir := filepath.Join(home, ".config", "Dark Forge", "chat_history")
 	entries, err := os.ReadDir(histDir)

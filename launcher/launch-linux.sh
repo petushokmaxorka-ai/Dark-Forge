@@ -3,20 +3,50 @@
 # 1. Starts the forge backend on :9091 (if not already running).
 # 2. Opens the Dark Forge IDE (bundled build), falling back to system codium.
 #
+# Works both from a release package (launch-linux.sh next to forge/) and
+# from a source checkout (launcher/launch-linux.sh).
+#
 # Usage: ./launch-linux.sh [workspace] [--system-codium]
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+if [ -d "${SCRIPT_DIR}/forge" ]; then
+  ROOT="${SCRIPT_DIR}"                    # release package
+else
+  ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"  # source checkout
+fi
+
+# Print the first path that exists.
+first_existing() {
+  local p
+  for p in "$@"; do
+    if [ -e "${p}" ]; then
+      printf '%s\n' "${p}"
+      return 0
+    fi
+  done
+  return 1
+}
+
 FORGE_BIN="${ROOT}/forge/forge"
-IDE_BIN="${ROOT}/ide/VSCode-linux-x64/darkforge"
-CONFIG="${DARKFORGE_CONFIG:-${ROOT}/config/forge.example.yaml}"
+IDE_BIN="$(first_existing \
+  "${ROOT}/darkforge-ide/darkforge" \
+  "${ROOT}/ide/VSCode-linux-x64/darkforge" || true)"
+# $DARKFORGE_CONFIG, then the user's config, then the bundled example.
+CONFIG="${DARKFORGE_CONFIG:-$(first_existing \
+  "${HOME:-}/.config/dark-forge/forge.yaml" \
+  "${ROOT}/forge.yaml" \
+  "${ROOT}/config/forge.example.yaml" \
+  "${ROOT}/forge.example.yaml" || true)}"
 LOG="${TMPDIR:-/tmp}/dark-forge.log"
 
-WORKSPACE="${1:-$PWD}"
+WORKSPACE="${PWD}"
 SYSTEM_CODIUM=0
 for arg in "$@"; do
-  [ "$arg" = "--system-codium" ] && SYSTEM_CODIUM=1
+  case "${arg}" in
+    --system-codium) SYSTEM_CODIUM=1 ;;
+    *) WORKSPACE="${arg}" ;;
+  esac
 done
 
 forge_up() {
@@ -26,7 +56,11 @@ forge_up() {
 if ! forge_up; then
   if [ -x "${FORGE_BIN}" ]; then
     echo "⚒ Dark Forge: starting backend on :9091…" >&2
-    setsid nohup "${FORGE_BIN}" --config "${CONFIG}" --repo "${WORKSPACE}" \
+    FORGE_ARGS=(--repo "${WORKSPACE}")
+    if [ -n "${CONFIG}" ]; then
+      FORGE_ARGS+=(--config "${CONFIG}")
+    fi
+    setsid nohup "${FORGE_BIN}" "${FORGE_ARGS[@]}" \
       </dev/null >>"${LOG}" 2>&1 &
     disown
     for _ in $(seq 1 15); do

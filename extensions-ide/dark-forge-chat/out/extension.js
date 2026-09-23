@@ -9,6 +9,7 @@
 const vscode = require("vscode");
 const fs = require("fs");
 const path = require("path");
+const os = require("os");
 
 let viewRef = null;
 let pendingInlineEdit = null;
@@ -24,7 +25,7 @@ const MODELS_LIST = [
   { id: "minimax", name: "MiniMax-M3",     kind: "cloud", glyph: "▣", color: "#ff69b4", desc: "autonomous · cloud" }
 ];
 
-const HISTORY_DIR = path.join(process.env.HOME || "/root", ".config", "Dark Forge", "chat_history");
+const HISTORY_DIR = path.join(process.env.HOME || os.homedir(), ".config", "Dark Forge", "chat_history");
 try { fs.mkdirSync(HISTORY_DIR, { recursive: true }); } catch (e) {}
 
 // === API helpers ===

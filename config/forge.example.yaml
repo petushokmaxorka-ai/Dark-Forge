@@ -62,4 +62,4 @@ routing:
       route: "magos"
       fallback: "magos"
       reason: "Simple → local"
-  cloud_down_fallback: "magos"
+  cloud_all_down: "magos"

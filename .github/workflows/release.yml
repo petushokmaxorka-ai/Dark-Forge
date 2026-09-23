@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   build:
-    name: Build ${{ matrix.os }}
+    name: Build ${{ matrix.goos }}
     runs-on: ${{ matrix.runner }}
     strategy:
       matrix:
@@ -45,34 +45,40 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-        if: matrix.goos == 'linux'
 
+      # Every package ships the extensions: the README install steps for
+      # Windows/macOS rely on installing the vsix into VSCodium.
       - name: Package extensions (vsix)
-        working-directory: extension
+        shell: bash
         run: |
-          npm ci --no-fund --no-audit
-          npx vsce package --allow-missing-repository -o swarm-chat.vsix
-        if: matrix.goos == 'linux'
+          (cd extension && npm ci --no-fund --no-audit && npx vsce package --allow-missing-repository)
+          (cd extensions-ide/dark-forge-chat && ../../extension/node_modules/.bin/vsce package --allow-missing-repository)
+          mkdir -p vsix
+          cp extension/*.vsix extensions-ide/dark-forge-chat/*.vsix vsix/
+          ls -la vsix
 
       - name: Assemble artifacts (linux)
         if: matrix.goos == 'linux'
         run: |
-          mkdir -p pkg/Dark.Forge-${GITHUB_REF_NAME#v}-linux-x64/{forge,extensions}
-          cp forge/forge forge/forge-tui pkg/Dark.Forge-${GITHUB_REF_NAME#v}-linux-x64/forge/
-          cp extension/swarm-chat.vsix pkg/Dark.Forge-${GITHUB_REF_NAME#v}-linux-x64/extensions/
-          cp launcher/launch-linux.sh pkg/Dark.Forge-${GITHUB_REF_NAME#v}-linux-x64/
-          cp config/forge.example.yaml README.md LICENSE THIRD_PARTY_NOTICES.md pkg/Dark.Forge-${GITHUB_REF_NAME#v}-linux-x64/
-          chmod +x pkg/Dark.Forge-${GITHUB_REF_NAME#v}-linux-x64/launch-linux.sh
-          tar -czf Dark.Forge-${GITHUB_REF_NAME#v}-linux-x64.tar.gz -C pkg Dark.Forge-${GITHUB_REF_NAME#v}-linux-x64
+          v="${GITHUB_REF_NAME#v}"
+          stage="pkg/Dark.Forge-${v}-linux-x64"
+          mkdir -p "$stage/forge" "$stage/extensions"
+          cp forge/forge forge/forge-tui "$stage/forge/"
+          cp vsix/*.vsix "$stage/extensions/"
+          cp launcher/launch-linux.sh "$stage/"
+          cp config/forge.example.yaml README.md LICENSE THIRD_PARTY_NOTICES.md "$stage/"
+          chmod +x "$stage/launch-linux.sh"
+          tar -czf "Dark.Forge-${v}-linux-x64.tar.gz" -C pkg "Dark.Forge-${v}-linux-x64"
 
       - name: Assemble artifacts (windows)
         if: matrix.goos == 'windows'
         shell: pwsh
         run: |
-          $v = "${{ github.ref_name }}".TrimStart("v")
+          $v = $env:GITHUB_REF_NAME.TrimStart("v")
           $stage = "pkg/Dark.Forge-$v-windows-x64"
-          New-Item -ItemType Directory -Force -Path "$stage/forge" | Out-Null
+          New-Item -ItemType Directory -Force -Path "$stage/forge", "$stage/extensions" | Out-Null
           Copy-Item forge/forge.exe "$stage/forge/"
+          Copy-Item vsix/*.vsix "$stage/extensions/"
           Copy-Item launcher/launch-windows.ps1 "$stage/"
           Copy-Item config/forge.example.yaml, README.md, LICENSE, THIRD_PARTY_NOTICES.md "$stage/"
           Compress-Archive -Path "$stage" -DestinationPath "Dark.Forge-$v-windows-x64.zip"
@@ -91,7 +97,7 @@ jobs:
           stage="pkg/Dark.Forge-${v}-macos"
           mkdir -p "$stage/forge" "$stage/extensions"
           cp forge/forge-amd64 forge/forge-arm64 "$stage/forge/"
-          cp extension/swarm-chat.vsix "$stage/extensions/" 2>/dev/null || true
+          cp vsix/*.vsix "$stage/extensions/"
           cp config/forge.example.yaml README.md LICENSE THIRD_PARTY_NOTICES.md "$stage/"
           printf 'Binaries are UNSIGNED — remove quarantine on first run:\n  xattr -d com.apple.quarantine forge/forge-arm64\n' > "$stage/README-MACOS.txt"
           ditto -c -k "$stage" "Dark.Forge-${v}-macos.zip"
