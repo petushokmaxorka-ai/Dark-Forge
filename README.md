@@ -80,12 +80,15 @@ both by hand: `forge/forge --config forge.example.yaml &` and
 ### Install — Windows
 
 1. Unzip `Dark.Forge-1.1.0-windows-x64.zip`.
-2. `forge\forge.exe --config forge.example.yaml` (edit endpoints inside), or
-   run `launch-windows.ps1` from the unzipped folder.
+2. `forge\forge.exe --config forge.example.yaml` (edit endpoints inside). The
+   `launch-windows.ps1` inside the 1.1.0 zip looks for `forge.exe` one folder
+   too high — use [`launcher/launch-windows.ps1`](launcher/launch-windows.ps1)
+   from this repo instead if you want the launcher.
 3. In VSCodium: `Extensions → ... → Install from VSIX` → pick
-   `extensions\swarm-chat-0.2.0.vsix` (the 1.1.0 zip lacks it — take it from the
-   Linux tarball), set `darkforge.baseUrl` to your backend, open
-   **Dark Forge: Swarm Chat**. The Dark Forge IDE already bundles it.
+   `extensions\swarm-chat-0.2.0.vsix` (the 1.1.0 zip lacks it — take
+   `extensions/swarm-chat.vsix` from the 1.1.0 Linux tarball), set
+   `darkforge.baseUrl` to your backend, open **Dark Forge: Swarm Chat**.
+   The Dark Forge IDE already bundles it.
 
 ### Build from source
 
@@ -112,7 +115,9 @@ requires one model named `magos` (the planner). Keys via env:
 ### Security
 
 - Backend binds `127.0.0.1` only.
-- No telemetry, no analytics, no update pings (VSCodium base).
+- No telemetry, no analytics (VSCodium base). The IDE keeps VSCodium's
+  update check (no update channel is published yet); set
+  `"update.mode": "none"` to turn it off.
 - Secrets: environment only, `${ENV}` expansion in config.
 
 ### Releasing
@@ -188,12 +193,15 @@ cd Dark.Forge-1.0.0-full-linux-x64
 ### Установка — Windows
 
 1. Распакуй `Dark.Forge-1.1.0-windows-x64.zip`.
-2. `forge\forge.exe --config forge.example.yaml` (эндпоинты — внутри) или
-   запусти `launch-windows.ps1` из распакованной папки.
+2. `forge\forge.exe --config forge.example.yaml` (эндпоинты — внутри).
+   `launch-windows.ps1` из zip 1.1.0 ищет `forge.exe` на каталог выше, чем
+   нужно — если нужен лаунчер, возьми
+   [`launcher/launch-windows.ps1`](launcher/launch-windows.ps1) из репозитория.
 3. В VSCodium: `Extensions → … → Install from VSIX` →
-   `extensions\swarm-chat-0.2.0.vsix` (в zip 1.1.0 его нет — возьми из
-   Linux-архива), укажи `darkforge.baseUrl` своего бэкенда, открой
-   **Dark Forge: Swarm Chat**. В IDE Dark Forge расширение уже встроено.
+   `extensions\swarm-chat-0.2.0.vsix` (в zip 1.1.0 его нет — возьми
+   `extensions/swarm-chat.vsix` из Linux-архива 1.1.0), укажи
+   `darkforge.baseUrl` своего бэкенда, открой **Dark Forge: Swarm Chat**.
+   В IDE Dark Forge расширение уже встроено.
 
 ### Сборка из исходников
 
@@ -217,7 +225,9 @@ cd ../extension && npm ci && npx @vscode/vsce package
 ### Безопасность
 
 - Бэкенд слушает только `127.0.0.1`.
-- Никакой телеметрии и аналитики (база VSCodium).
+- Никакой телеметрии и аналитики (база VSCodium). Проверка обновлений
+  VSCodium в IDE осталась (канал обновлений пока не опубликован);
+  отключается настройкой `"update.mode": "none"`.
 - Секреты: только переменные окружения, `${ENV}`-подстановка в конфиге.
 
 ### Релизы
