@@ -222,6 +222,7 @@ func TestGitHub_NameDescription(t *testing.T) {
 
 // TestGitHub_ListIssues_Stub returns synthetic empty result.
 func TestGitHub_ListIssues_Stub(t *testing.T) {
+	t.Setenv("GITHUB_TOKEN", "") // stub mode must not depend on the caller's env
 	g := NewGitHubTool("owner/repo")
 	res, err := g.Execute(json.RawMessage(`{"action":"list_issues"}`))
 	if err != nil {
