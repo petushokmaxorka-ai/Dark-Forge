@@ -4,8 +4,8 @@
 > Dark Mechanicus Coding Terminal — local-only, multi-agent, Trinity Doctrine.
 
 ![Forge](https://img.shields.io/badge/Forge-v0.1.0-crimson)
-![Go](https://img.shields.io/badge/Go-1.26-blue)
-![License](https://img.shields.io/badge/License-Proprietary-red)
+![Go](https://img.shields.io/badge/Go-1.24-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
 
 ## Что это
 
@@ -43,7 +43,7 @@ Swarm roles:
 ## Установка
 
 ```bash
-cd ~/heretic-os/heretic-forge
+cd forge            # в корне репозитория Dark-Forge
 go build -o forge ./cmd/forge/
 ```
 
@@ -51,8 +51,8 @@ go build -o forge ./cmd/forge/
 
 ```bash
 # 3-model swarm должен работать на :11436 (Qwable, Qwythos, Vox Dei)
-cd ~/heretic-os/heretic-forge
-./forge --model http://127.0.0.1:11436 --repo ~/heretic-os --port 9091
+cd forge
+./forge --model http://127.0.0.1:11436 --repo ~/your-project --port 9091
 ```
 
 Открой в браузере: **http://localhost:9091**
@@ -95,7 +95,7 @@ cd ~/heretic-os/heretic-forge
 
 | Компонент | Технология |
 |-----------|-----------|
-| Backend | Go 1.26 |
+| Backend | Go 1.24+ |
 | Frontend | Embedded HTML + Vanilla JS |
 | LLM | llama.cpp 0.15.2 (llama-swap) |
 | Models | Qwable-9B · Qwythos-9B · Vox Dei (Gemma-4-12B) |
