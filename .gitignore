@@ -26,6 +26,7 @@ forge.yaml
 .DS_Store
 Thumbs.db
 .forge_sessions/
+.forge_compare/
 ide/.node24/
 
 # IDE build outputs
